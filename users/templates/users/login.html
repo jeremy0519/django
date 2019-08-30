@@ -14,8 +14,8 @@
       {% buttons %}
         <button name="submit" class="btn btn-primary">log in</button>
       {% endbuttons %}
+      <a href="{% url "social:begin" "github" %}"><img src="https://s2.ax1x.com/2019/08/30/mXK1df.png" alt="mXK1df.png" border="0" /></a>
 
       <input type="hidden" name="next" value="{% url 'learning_logs:index' %}" />
     </form>
- 
  {% endblock content %}

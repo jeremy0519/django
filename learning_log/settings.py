@@ -40,13 +40,15 @@ INSTALLED_APPS = (
     
     # 第三方应用程序
 	'bootstrap3',
-    
+    'social_django',
+
     # 我的应用程序
 	'learning_logs',
 	'users',
 )
 
 MIDDLEWARE_CLASSES = (
+	'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -70,6 +72,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                'social_django.context_processors.backends', 
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -106,7 +111,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'collected_static')
+STATIC_URL = "/static/"
 
 # 我的设置
 LOGIN_URL = '/users/login/'
@@ -116,22 +122,20 @@ BOOTSTRAP3 = {
 	'include_jquery': True,
 	}
 
-# Heroku设置
-if os.getcwd() == '/app':
-	import dj_database_url
-	DATABASES = {
-		'default': dj_database_url.config(default='postgres://localhost')
-	}
+# github设置
 
-	# 让request.is_secure()承认X-Forwarded-Proto头
-	SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-	
-	# 支持所有的主机头（host header）
-	ALLOWED_HOSTS = ['*']
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.github.GithubOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
 
-	# 静态资产配置
-	BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-	STATIC_ROOT = 'staticfiles'
-	STATICFILES_DIRS = (
-		os.path.join(BASE_DIR, 'static'),
-	)
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+
+# 填写Github中获取到的KEY和SECRET
+
+SOCIAL_AUTH_GITHUB_KEY = 'ea8cfd62557468a1cbe1'
+SOCIAL_AUTH_GITHUB_SECRET = 'f116b70e5086e672546fa0a7d2680df618b22d5d'
+SOCIAL_AUTH_GITHUB_USE_OPENID_AS_USERNAME = True
+
+# 登陆成功后的回调路由
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/' # 登陆成功之后的路由
